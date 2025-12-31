@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYBER BIRTHDAY</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:black;
+  font-family:"Courier New", monospace;
+  overflow:hidden;
+  color:#00ff66;
+}
+
+/* MATRIX BACKGROUND */
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+}
+
+/* CENTER */
+.screen{
+  width:100vw;height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+/* TAP TEXT */
+.tapText{
+  margin-bottom:18px;
+  font-size:20px;
+  letter-spacing:2px;
+  animation:blink 1s infinite;
+}
+@keyframes blink{50%{opacity:.3;}}
+
+/* 🔥 BIGGER BOX */
+.box{
+  width:95%;
+  max-width:520px;     /* increased */
+  height:340px;        /* increased */
+  border:2px solid #00ff66;
+  background:rgba(0,0,0,.88);
+  box-shadow:0 0 30px #00ff66;
+  perspective:1000px;
+}
+
+/* FLIP */
+.inner{
+  width:100%;
+  height:100%;
+  transform-style:preserve-3d;
+  transition:transform 2s;
+}
+.flip .inner{transform:rotateX(180deg);}
+
+.front,.back{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  padding:20px;
+}
+
+/* BACK */
+.back{
+  transform:rotateX(180deg);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+/* TYPE */
+#typeBox{
+  font-size:17px;
+  line-height:1.6;
+}
+
+/* 🎂 CAKE */
+.cake{
+  width:220px;        /* increased */
+  height:140px;       /* increased */
+  background:linear-gradient(#ff0055,#ff77aa);
+  border-radius:14px;
+  position:relative;
+  box-shadow:0 18px 35px rgba(255,0,120,.7);
+}
+.layer{
+  position:absolute;
+  top:55px;
+  width:100%;
+  height:34px;
+  background:white;
+}
+.candle{
+  position:absolute;
+  width:9px;
+  height:48px;
+  background:white;
+  top:-48px;
+  left:50%;
+  transform:translateX(-50%);
+}
+.flame{
+  position:absolute;
+  width:16px;
+  height:16px;
+  background:orange;
+  border-radius:50%;
+  top:-16px;
+  left:-3px;
+  animation:flicker .3s infinite alternate;
+}
+@keyframes flicker{to{transform:scale(1.3);}}
+
+/* TEXT BELOW CAKE */
+.belowText{
+  margin-top:14px;
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+}
+
+/* BALLOONS */
+.balloon{
+  position:absolute;
+  bottom:-60px;
+  width:32px;
+  height:44px;
+  border-radius:50%;
+  animation:float 6s linear infinite;
+}
+@keyframes float{to{transform:translateY(-120vh);}}
+
+/* FIRE RAIN */
+.rain{
+  position:absolute;
+  top:-20px;
+  font-size:20px;
+  animation:fall 4s linear infinite;
+}
+@keyframes fall{to{transform:translateY(120vh);}}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<!-- BACKGROUND MUSIC -->
+<audio id="music" loop>
+  <source src="https://cdn.pixabay.com/audio/2023/03/27/audio_87b42b1d8c.mp3">
+</audio>
+
+<div class="screen">
+
+  <div class="tapText">TAP BAITHAY BOY</div>
+
+  <div class="box" id="box">
+    <div class="inner">
+
+      <!-- FRONT -->
+      <div class="front">
+        <div id="typeBox"></div>
+      </div>
+
+      <!-- BACK -->
+      <div class="back">
+        <div class="cake">
+          <div class="candle">
+            <div class="flame" id="flame"></div>
+          </div>
+          <div class="layer"></div>
+        </div>
+
+        <div class="belowText">
+          🎉 HAPPY BIRTHDAY<br>
+          <span id="name">नाम यहाँ डालो</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===== NAME ===== */
+document.getElementById("name").innerText="नाम यहाँ डालो";
+
+/* MATRIX */
+const c=document.getElementById("matrix");
+const ctx=c.getContext("2d");
+c.width=innerWidth;c.height=innerHeight;
+const chars="01HACKER";
+const font=16;
+const cols=c.width/font;
+const drops=Array(Math.floor(cols)).fill(1);
+
+setInterval(()=>{
+  ctx.fillStyle="rgba(0,0,0,.1)";
+  ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle="#00ff66";
+  ctx.font=font+"px monospace";
+  for(let i=0;i<drops.length;i++){
+    const t=chars[Math.floor(Math.random()*chars.length)];
+    ctx.fillText(t,i*font,drops[i]*font);
+    if(drops[i]*font>c.height && Math.random()>0.95) drops[i]=0;
+    drops[i]++;
+  }
+},33);
+
+/* TYPING */
+const lines=[
+  ">> ACCESS GRANTED",
+  ">> BIRTHDAY SEQUENCE LOADED",
+  ">> CAKE MODULE READY"
+];
+let i=0,j=0;
+const boxText=document.getElementById("typeBox");
+
+function type(){
+  if(i<lines.length){
+    if(j<lines[i].length){
+      boxText.innerHTML+=lines[i][j++];
+      setTimeout(type,60);
+    }else{
+      boxText.innerHTML+="<br>";
+      i++;j=0;
+      setTimeout(type,600);
+    }
+  }
+}
+
+document.body.addEventListener("click",()=>{
+  music.play();
+  type();
+  setTimeout(()=>box.classList.add("flip"),10000);
+  setTimeout(()=>flame.style.display="none",20000);
+
+  setInterval(()=>{
+    const b=document.createElement("div");
+    b.className="balloon";
+    b.style.left=Math.random()*100+"vw";
+    b.style.background=`hsl(${Math.random()*360},80%,60%)`;
+    document.body.appendChild(b);
+    setTimeout(()=>b.remove(),6000);
+  },500);
+
+  setInterval(()=>{
+    const r=document.createElement("div");
+    r.className="rain";
+    r.innerText="🎆";
+    r.style.left=Math.random()*100+"vw";
+    document.body.appendChild(r);
+    setTimeout(()=>r.remove(),4000);
+  },300);
+},{once:true});
+</script>
+
+</body>
+</html>
